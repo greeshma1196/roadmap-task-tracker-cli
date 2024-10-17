@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 )
 
 const fileName = "data.json"
@@ -22,6 +23,19 @@ type task struct {
 	Status      status `json:"Status"`
 	CreatedAt   int64  `json:"CreatedAt"`
 	UpdatedAt   int64  `json:"UpdatedAt"`
+}
+
+func addTask(data []task, desc string) ([]task, int, error) {
+
+	id := len(data) + 1
+
+	// set struct task
+	t := task{ID: id, Description: desc, Status: StatusToDo, CreatedAt: time.Now().Unix(), UpdatedAt: time.Now().Unix()}
+
+	// append task to unmarshalled data
+	data = append(data, t)
+
+	return data, id, nil
 }
 
 func main() {
@@ -55,7 +69,18 @@ func main() {
 
 	switch input {
 	case "add":
-		fmt.Printf("Task added successfully (ID: %d)\n", 0)
+		if len(os.Args) != 3 || os.Args[2] == "" {
+			panic(fmt.Errorf("missing description"))
+		}
+
+		var id int
+
+		data, id, err = addTask(data, os.Args[2])
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("Task added successfully (ID: %d)\n", id)
 	case "update":
 		fmt.Printf("Task updated successfully (ID: %d)\n", 0)
 	case "delete":
