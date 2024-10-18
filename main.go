@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -36,6 +37,18 @@ func addTask(data []task, desc string) ([]task, int, error) {
 	data = append(data, t)
 
 	return data, id, nil
+}
+
+func updateTask(data []task, id int, desc string) ([]task, error) {
+
+	for i := range data { // why does this only work with index?
+		if data[i].ID == id {
+			data[i].Description = desc
+			data[i].UpdatedAt = time.Now().Unix()
+		}
+	}
+
+	return data, nil
 }
 
 func main() {
@@ -82,7 +95,25 @@ func main() {
 
 		fmt.Printf("Task added successfully (ID: %d)\n", id)
 	case "update":
-		fmt.Printf("Task updated successfully (ID: %d)\n", 0)
+		if len(os.Args) != 4 || os.Args[3] == "" {
+			panic(fmt.Errorf("missing task id or description"))
+		}
+
+		id, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			panic(err)
+		}
+		if id < 1 {
+			panic(fmt.Errorf("invalid id"))
+		}
+
+		data, err = updateTask(data, id, os.Args[3])
+
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("Task updated successfully (ID: %d)\n", id)
 	case "delete":
 		fmt.Printf("Task deleted successfully (ID: %d)\n", 0)
 	case "mark-in-progress":
