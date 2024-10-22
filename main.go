@@ -131,6 +131,11 @@ func listTasks(data []task, stat string) error {
 
 func main() {
 
+	// need to double check this logic
+	// if len(os.Args) == 0 {
+	// 	panic(fmt.Errorf("use --help"))
+	// }
+
 	input := os.Args[1]
 
 	// create the data file if it does not exist
@@ -159,6 +164,16 @@ func main() {
 	}
 
 	switch input {
+	case "--help":
+		fmt.Println("add 'TASK_DESCRIPTION' - add a new task")
+		fmt.Println("update 'TASK_ID' 'TASK_DESCRIPTION' - update task description")
+		fmt.Println("delete 'TASK_ID' - delete task")
+		fmt.Println("mark-in-progress 'TASK_ID' - update task status to in-progress")
+		fmt.Println("mark-done 'TASK_ID' - update task status to done")
+		fmt.Println("list - list all tasks")
+		fmt.Println("list todo - list all tasks that have todo status")
+		fmt.Println("list in-progress - list all tasks that have in-progress status")
+		fmt.Println("list done - list all tasks that have done status")
 	case "add":
 		if len(os.Args) != 3 || os.Args[2] == "" {
 			panic(fmt.Errorf("missing description"))
