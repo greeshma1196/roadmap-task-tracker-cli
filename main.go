@@ -41,7 +41,7 @@ func addTask(data []task, desc string) ([]task, int, error) {
 
 func updateTask(data []task, id int, desc string) ([]task, error) {
 
-	for i := range data { // why does this only work with index?
+	for i := range data {
 		if data[i].ID == id {
 			data[i].Description = desc
 			data[i].UpdatedAt = time.Now().Unix()
@@ -71,6 +71,20 @@ func deleteTask(data []task, id int) ([]task, error) {
 	}
 
 	return dataUpdated, nil
+}
+
+func markInProgressTask(data []task, id int) ([]task, error) {
+
+	// mark task in progress
+	for i := range data {
+		if data[i].ID == id {
+			data[i].Status = StatusInProgress
+			data[i].UpdatedAt = time.Now().Unix()
+			return data, nil
+		}
+	}
+
+	return data, fmt.Errorf("task not present")
 }
 
 func main() {
@@ -130,7 +144,7 @@ func main() {
 		}
 
 		if len(data) == 0 {
-			panic(fmt.Errorf("invalid task update"))
+			panic(fmt.Errorf("no tasks present, please add"))
 		}
 
 		data, err = updateTask(data, id, os.Args[3])
@@ -149,8 +163,13 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+
 		if id < 1 {
 			panic(fmt.Errorf("invalid id"))
+		}
+
+		if len(data) == 0 {
+			panic(fmt.Errorf("no tasks present, please add"))
 		}
 
 		data, err = deleteTask(data, id)
@@ -160,7 +179,29 @@ func main() {
 
 		fmt.Printf("Task deleted successfully (ID: %d)\n", id)
 	case "mark-in-progress":
-		fmt.Printf("Task marked in progress successfully (ID: %d)\n", 0)
+		if len(os.Args) != 3 {
+			panic(fmt.Errorf("missing task id"))
+		}
+
+		id, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			panic(err)
+		}
+
+		if id < 1 {
+			panic(fmt.Errorf("invalid id"))
+		}
+
+		if len(data) == 0 {
+			panic(fmt.Errorf("no tasks present, please add"))
+		}
+
+		data, err = markInProgressTask(data, id)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("Task marked in progress successfully (ID: %d)\n", id)
 	case "mark-done":
 		fmt.Printf("Task marked as done successfully (ID: %d)\n", 0)
 	case "list":
