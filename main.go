@@ -52,6 +52,27 @@ func updateTask(data []task, id int, desc string) ([]task, error) {
 	return data, fmt.Errorf("task not present")
 }
 
+func deleteTask(data []task, id int) ([]task, error) {
+
+	var dataUpdated []task
+	isTaskPresent := false
+
+	//delete task
+	for i := range data {
+		if data[i].ID == id {
+			isTaskPresent = true
+		} else {
+			dataUpdated = append(dataUpdated, data[i])
+		}
+	}
+
+	if !isTaskPresent {
+		return dataUpdated, fmt.Errorf("task not present")
+	}
+
+	return dataUpdated, nil
+}
+
 func main() {
 
 	input := os.Args[1]
@@ -120,7 +141,24 @@ func main() {
 
 		fmt.Printf("Task updated successfully (ID: %d)\n", id)
 	case "delete":
-		fmt.Printf("Task deleted successfully (ID: %d)\n", 0)
+		if len(os.Args) != 3 {
+			panic(fmt.Errorf("missing task id"))
+		}
+
+		id, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			panic(err)
+		}
+		if id < 1 {
+			panic(fmt.Errorf("invalid id"))
+		}
+
+		data, err = deleteTask(data, id)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("Task deleted successfully (ID: %d)\n", id)
 	case "mark-in-progress":
 		fmt.Printf("Task marked in progress successfully (ID: %d)\n", 0)
 	case "mark-done":

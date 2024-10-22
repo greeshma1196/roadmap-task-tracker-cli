@@ -42,3 +42,27 @@ func TestUpdateTask(t *testing.T) {
 		require.EqualError(t, err, "task not present")
 	})
 }
+
+func TestDeleteTask(t *testing.T) {
+	t.Run("Successfully deletes task", func(t *testing.T) {
+		data := []task{
+			{ID: 1, Description: "Task1", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+		}
+		dataExp := []task{
+			{ID: 2, Description: "Task2", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+		}
+		dataAct, err := deleteTask(data, 1)
+		require.Nil(t, err)
+		require.Equal(t, dataExp, dataAct)
+	})
+
+	t.Run("Successfully throws task not present error", func(t *testing.T) {
+		data := []task{
+			{ID: 1, Description: "Task1", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+		}
+		_, err := deleteTask(data, 3)
+		require.EqualError(t, err, "task not present")
+	})
+}
