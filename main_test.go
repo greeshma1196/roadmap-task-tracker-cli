@@ -108,3 +108,54 @@ func TestDoneTask(t *testing.T) {
 		require.EqualError(t, err, "task not present")
 	})
 }
+
+func TestListTasks(t *testing.T) {
+	t.Run("Successfully lists all tasks", func(t *testing.T) {
+		data := []task{
+			{ID: 1, Description: "Task1", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+		}
+		err := listTasks(data, "")
+		require.Nil(t, err)
+	})
+
+	t.Run("Successfully lists tasks in 'todo'", func(t *testing.T) {
+		data := []task{
+			{ID: 1, Description: "Task1", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusInProgress, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusDone, CreatedAt: 0, UpdatedAt: 0},
+		}
+		err := listTasks(data, "todo")
+		require.Nil(t, err)
+	})
+
+	t.Run("Successfully lists tasks in 'in-progress'", func(t *testing.T) {
+		data := []task{
+			{ID: 1, Description: "Task1", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusInProgress, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusDone, CreatedAt: 0, UpdatedAt: 0},
+		}
+		err := listTasks(data, "in-progress")
+		require.Nil(t, err)
+	})
+
+	t.Run("Successfully lists tasks in 'done'", func(t *testing.T) {
+		data := []task{
+			{ID: 1, Description: "Task1", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusInProgress, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusDone, CreatedAt: 0, UpdatedAt: 0},
+		}
+		err := listTasks(data, "done")
+		require.Nil(t, err)
+	})
+
+	t.Run("Successfully throws wrong status error", func(t *testing.T) {
+		data := []task{
+			{ID: 1, Description: "Task1", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusInProgress, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusDone, CreatedAt: 0, UpdatedAt: 0},
+		}
+		err := listTasks(data, "status")
+		require.EqualError(t, err, "wrong status")
+	})
+}

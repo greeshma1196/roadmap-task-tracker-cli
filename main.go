@@ -101,6 +101,34 @@ func markDoneTask(data []task, id int) ([]task, error) {
 	return data, fmt.Errorf("task not present")
 }
 
+func listTasks(data []task, stat string) error {
+
+	if stat == "" {
+		for _, task := range data {
+			fmt.Printf("%d. %s\n", task.ID, task.Description)
+		}
+	} else {
+		var s status
+		if stat == "done" {
+			s = StatusDone
+		} else if stat == "todo" {
+			s = StatusToDo
+		} else if stat == "in-progress" {
+			s = StatusInProgress
+		} else {
+			return fmt.Errorf("wrong status")
+		}
+
+		for _, task := range data {
+			if task.Status == s {
+				fmt.Printf("%d. %s\n", task.ID, task.Description)
+			}
+		}
+	}
+
+	return nil
+}
+
 func main() {
 
 	input := os.Args[1]
@@ -241,7 +269,25 @@ func main() {
 
 		fmt.Printf("Task marked in progress successfully (ID: %d)\n", id)
 	case "list":
-		fmt.Printf("No Tasks\n")
+		if len(os.Args) < 2 {
+			panic(fmt.Errorf("missing task to do"))
+		}
+
+		if len(data) == 0 {
+			panic(fmt.Errorf("no tasks present, please add"))
+		}
+
+		if len(os.Args) == 2 {
+			err := listTasks(data, "")
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			err := listTasks(data, os.Args[2])
+			if err != nil {
+				panic(err)
+			}
+		}
 	}
 
 	b, err := json.MarshalIndent(data, "", " ")
