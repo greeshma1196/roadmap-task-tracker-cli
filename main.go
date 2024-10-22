@@ -87,6 +87,20 @@ func markInProgressTask(data []task, id int) ([]task, error) {
 	return data, fmt.Errorf("task not present")
 }
 
+func markDoneTask(data []task, id int) ([]task, error) {
+
+	// mark task in progress
+	for i := range data { // why does this only work with index?
+		if data[i].ID == id {
+			data[i].Status = StatusDone
+			data[i].UpdatedAt = time.Now().Unix()
+			return data, nil
+		}
+	}
+
+	return data, fmt.Errorf("task not present")
+}
+
 func main() {
 
 	input := os.Args[1]
@@ -203,7 +217,29 @@ func main() {
 
 		fmt.Printf("Task marked in progress successfully (ID: %d)\n", id)
 	case "mark-done":
-		fmt.Printf("Task marked as done successfully (ID: %d)\n", 0)
+		if len(os.Args) != 3 {
+			panic(fmt.Errorf("missing task id"))
+		}
+
+		id, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			panic(err)
+		}
+
+		if id < 1 {
+			panic(fmt.Errorf("invalid id"))
+		}
+
+		if len(data) == 0 {
+			panic(fmt.Errorf("no tasks present, please add"))
+		}
+
+		data, err = markDoneTask(data, id)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("Task marked in progress successfully (ID: %d)\n", id)
 	case "list":
 		fmt.Printf("No Tasks\n")
 	}

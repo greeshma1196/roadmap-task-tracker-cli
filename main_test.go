@@ -87,3 +87,24 @@ func TestMarkInProgressTask(t *testing.T) {
 		require.EqualError(t, err, "task not present")
 	})
 }
+
+func TestDoneTask(t *testing.T) {
+	t.Run("Successfully marks task done", func(t *testing.T) {
+		data := []task{
+			{ID: 1, Description: "Task1", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+		}
+		data, err := markDoneTask(data, 1)
+		require.Nil(t, err)
+		require.Equal(t, StatusDone, data[0].Status)
+	})
+
+	t.Run("Successfully throws task not present error", func(t *testing.T) {
+		data := []task{
+			{ID: 1, Description: "Task1", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+			{ID: 2, Description: "Task2", Status: StatusToDo, CreatedAt: 0, UpdatedAt: 0},
+		}
+		_, err := markDoneTask(data, 3)
+		require.EqualError(t, err, "task not present")
+	})
+}
