@@ -45,10 +45,11 @@ func updateTask(data []task, id int, desc string) ([]task, error) {
 		if data[i].ID == id {
 			data[i].Description = desc
 			data[i].UpdatedAt = time.Now().Unix()
+			return data, nil
 		}
 	}
 
-	return data, nil
+	return data, fmt.Errorf("task not present")
 }
 
 func main() {
@@ -105,6 +106,10 @@ func main() {
 		}
 		if id < 1 {
 			panic(fmt.Errorf("invalid id"))
+		}
+
+		if len(data) == 0 {
+			panic(fmt.Errorf("invalid task update"))
 		}
 
 		data, err = updateTask(data, id, os.Args[3])
