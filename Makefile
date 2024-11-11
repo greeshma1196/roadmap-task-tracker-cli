@@ -1,5 +1,5 @@
-dev:
-	go run main.go
+build:
+	go build -o task-cli
 test:
 	go test ./... -coverprofile cover.out -v
 lint: 
